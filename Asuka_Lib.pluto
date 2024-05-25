@@ -1,0 +1,320 @@
+local asuka_lib = {}
+
+function asuka_lib.session_type()
+    if util.is_session_started() or util.is_session_transition_active() then
+        if NETWORK_SESSION_IS_PRIVATE() then
+            return "Privat"
+        end
+        if NETWORK_SESSION_IS_CLOSED_FRIENDS() then
+            return "Friends"
+        end
+        if NETWORK_SESSION_IS_CLOSED_CREW() then
+            return "Crew"
+        end
+        if NETWORK_SESSION_IS_SOLO() then
+            return "Solo"
+        end
+        return "Public"
+    end
+    return "Singleplayer"
+end
+
+asuka_lib.asuka_booty = false
+
+function asuka_lib.transition_state(state)
+    if asuka_lib.asuka_booty then
+        return state and 666 or "UwU"
+    end
+    if not util.is_session_transition_active() and util.is_session_started() and players.are_stats_ready(players.user()) then
+        return state and 1 or "Docked"
+    end
+    if not util.is_session_transition_active() and util.is_session_started() and not players.are_stats_ready(players.user()) then
+        return state and 2 or "Pressurization"
+    end
+    if util.is_session_transition_active() then
+        return state and 3 or "Orbit"
+    end
+    return state and 404 or "404"
+end
+
+function asuka_lib.player_exist(pid)
+    if pid and players.exists(pid) then
+        return true
+    end
+    return false
+end
+
+function asuka_lib.has_detection(pid, detection_part)
+    if asuka_lib.player_exist(pid) and menu.player_root(pid):isValid() then
+        for menu.player_root(pid):getChildren() as cmd do
+            if asuka_lib.player_exist(pid) and cmd:getType() == COMMAND_LIST_CUSTOM_SPECIAL_MEANING then
+                for cmd:getChildren() as detection do
+                    if asuka_lib.player_exist(pid) and string.contains(detection.menu_name, detection_part) then
+                        return true
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+
+function asuka_lib.discovered_since(pid)
+    if asuka_lib.player_exist(pid) and menu.player_root(pid):isValid() then
+        local playerPath = menu.player_root(pid)
+        local timeString = playerPath:refByRelPath("Information>Discovered").value
+        if timeString and type(timeString) == "string" then
+            local minutes, seconds = timeString:match("(%d+) minutes, (%d+) seconds ago")
+            if minutes and seconds then
+                local timeInSeconds = tonumber(minutes) * 60 + tonumber(seconds)
+                return timeInSeconds
+            end
+        end
+    end
+    return 0
+end
+
+function asuka_lib.is_loading(pid)
+    if asuka_lib.transition_state(true) ~= 1 then
+        return false
+    end
+    if not players.is_visible(pid) and players.are_stats_ready(pid) and GET_ENTITY_SPEED(GET_PLAYER_PED_SCRIPT_INDEX(pid)) < 1 and not IS_PLAYER_IN_CUTSCENE(pid) then
+        return true
+    end
+    return false
+end
+
+function asuka_lib.is_in_clouds(pid)
+    if asuka_lib.transition_state(true) ~= 1 then
+        if pid == players.user() then
+            return true
+        else
+            return false
+        end
+    end
+    if not players.is_visible(pid) and not players.are_stats_ready(pid) and GET_ENTITY_SPEED(GET_PLAYER_PED_SCRIPT_INDEX(pid)) < 1 and not IS_PLAYER_IN_CUTSCENE(pid) then
+        return true
+    end
+    return false
+end
+
+function asuka_lib.get_session_code()
+    local applicable, code = util.get_session_code()
+    if applicable then
+        if code then
+            return code
+        end
+        return "Please wait..."
+    end
+    return "N/A"
+end
+
+function asuka_lib.does_entity_exist(entity)
+    if entity and entity ~= INVALID_GUID and DOES_ENTITY_EXIST(entity)then
+        return true
+    end
+    return false
+end
+
+function asuka_lib.get_user_vehicle()
+    local user_vehicle_handle = entities.get_user_vehicle_as_handle(true)
+    if user_vehicle_handle == INVALID_GUID then
+        return entities.get_user_personal_vehicle_as_handle()
+    else
+        return user_vehicle_handle
+    end
+end
+
+function asuka_lib.get_trailer(vehicle)
+    local trailerPtr = memory.alloc_int()
+    GET_VEHICLE_TRAILER_VEHICLE(vehicle, trailerPtr)
+    local trailer = memory.read_int(trailerPtr)
+    return trailer
+end
+
+function asuka_lib.is_user_driving_vehicle(vehicle)
+    if GET_PED_IN_VEHICLE_SEAT(vehicle, -1) == players.user_ped() then
+        return true
+    end
+    return false 
+end
+
+function asuka_lib.is_vehicle_free_for_use(vehicle)
+    local driverPed = GET_PED_IN_VEHICLE_SEAT(vehicle, -1)
+    local driver = IS_PED_A_PLAYER(driverPed)
+    if not driver or driverPed == players.user_ped() then
+        return true
+    end
+    return false
+end
+
+function asuka_lib.is_vehicle_empty(vehicle)
+    local seat_int = GET_VEHICLE_MODEL_NUMBER_OF_SEATS(entities.get_model_hash(vehicle))
+    for seat = -1, seat_int do
+        local seater = GET_PED_IN_VEHICLE_SEAT(vehicle, seat, true)
+        if seater and seater ~= 0 then
+            return false
+        end
+    end
+    return true
+end
+
+function asuka_lib.get_number_of_passengers(vehicle)
+    local seat_int = GET_VEHICLE_MODEL_NUMBER_OF_SEATS(entities.get_model_hash(vehicle))
+    local passenger_count = 0
+    for seat = -1, seat_int do
+        local seater = GET_PED_IN_VEHICLE_SEAT(vehicle, seat, true)
+        if seater and seater ~= 0 then
+            passenger_count = passenger_count + 1
+        end
+    end
+    return passenger_count
+end
+
+function asuka_lib.is_user_inside_vehicle(bool)
+    if bool == nil then bool = true end
+    return (IS_PED_IN_ANY_VEHICLE(players.user_ped(), bool))
+end
+
+function asuka_lib.request_model(hash, timeout)
+    if not HAS_MODEL_LOADED(hash) then
+        REQUEST_MODEL(hash)
+        local start_time = os.time()
+        while not HAS_MODEL_LOADED(hash) do
+            if os.time() - start_time > timeout or timeout == 0 then
+                return false
+            end
+            util.yield(timeout)
+        end
+    end
+    return true
+end
+
+function asuka_lib.allow_spawn_check()
+    if NETWORK_IS_ACTIVITY_SESSION() then
+        return false
+    end
+    if not players.is_visible(players.user()) then
+        return false
+    end
+    if GET_INTERIOR_FROM_ENTITY(players.user_ped()) ~= 0 and asuka_lib.is_user_inside_vehicle(true) then
+        return false
+    end
+    if not NETWORK_IS_PLAYER_ACTIVE(players.user()) then
+        return false
+    end
+    return true
+end
+
+function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll, yaw, order, timeout, anti_collision, networked)
+    if order == nil then order = 2 end
+    if not asuka_lib.does_entity_exist(entity) then
+        if asuka_lib.request_model(hash, timeout) then
+            if networked then
+                entity = entities.create_object(hash, locationV3)
+            else
+                entity = CREATE_OBJECT_NO_OFFSET(hash, locationV3, false, true, false)
+            end
+            if asuka_lib.does_entity_exist(entity) then
+                if networked then
+                    entities.set_can_migrate(entity, false)
+                end
+                SET_ENTITY_COORDS_NO_OFFSET(entity, locationV3, true, true, true)
+                SET_ENTITY_ROTATION(entity, pitch, roll, yaw, order, true)
+                FREEZE_ENTITY_POSITION(entity, true)
+            end
+        end
+    end
+    if anti_collision and asuka_lib.does_entity_exist(entity) then
+        if not networked then
+            SET_ENTITY_NO_COLLISION_ENTITY(entity, players.user_ped(), false)
+        else
+            local closestDistance = nil
+            local closestPlayer = players.user()
+            for players.list_only(true, true, false, true) as pid do
+                local distance = locationV3:distance(players.get_position(pid))
+                if not closestDistance or distance < closestDistance then
+                    closestDistance = distance
+                    closestPlayer = pid
+                end
+                util.yield(timeout)
+            end
+            if closestPlayer then
+                if closestPlayer == players.user() then
+                    entities.request_control(entity)
+                    entities.set_can_migrate(entity, false)
+                    SET_ENTITY_COORDS_NO_OFFSET(entity, locationV3, true, true, true)
+                    SET_ENTITY_ROTATION(entity, pitch, roll, yaw, order, true)
+                    FREEZE_ENTITY_POSITION(entity, true)
+                else
+                    entities.set_can_migrate(entity, true)
+                end
+                SET_ENTITY_NO_COLLISION_ENTITY(entity, GET_PLAYER_PED_SCRIPT_INDEX(closestPlayer), false)
+            end
+        end
+    end
+    return entity
+end
+
+function asuka_lib.delete_entity(ent)
+    if asuka_lib.does_entity_exist(ent) then
+        entities.delete(ent)
+    end
+end
+
+function asuka_lib.read_from_file(the_path)
+    local file = io.open(the_path, "r")
+    if file then
+        local content = file:read("*all")
+        file:close()
+        return content
+    else
+        return nil
+    end
+end
+
+function asuka_lib.write_to_file(payload, the_path)
+    local file = io.open(the_path, "w")
+    if file then
+        file:write(payload)
+        file:close()
+    end
+end
+
+function asuka_lib.load_and_apply_config(config_path, data_cfg)
+    local file = io.open(config_path, 'r')
+    if file then
+        local config_data = asuka_lib.read_from_file(config_path)
+
+        local decode_status, decoded_data = pcall(soup.json.decode, config_data)
+        if decode_status then
+            for store, path in pairs(data_cfg) do
+                local value = decoded_data[store]
+                if value ~= nil then
+                    menu.set_value(path, value)
+                end
+                util.yield()
+            end
+            print("Config loaded and applied successfully.")
+        else
+            print("Error: Unable to decode config data.")
+        end
+    else
+        print("Error: Unable to open config file.")
+    end
+end
+
+function asuka_lib.save_config(config_path, data_cfg, bool)
+    local config_data = {}
+    for store, path in pairs(data_cfg) do
+        config_data[store] = menu.get_value(path)
+        if bool then
+            util.yield()
+        end
+    end
+
+    local encode_status, json_data = pcall(soup.json.encode, config_data)
+    asuka_lib.write_to_file(config_path, json_data)
+end
+
+return asuka_lib
