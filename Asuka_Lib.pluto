@@ -64,11 +64,24 @@ function asuka_lib.discovered_since(pid)
         local playerPath = menu.player_root(pid)
         local timeString = playerPath:refByRelPath("Information>Discovered").value
         if timeString and type(timeString) == "string" then
-            local minutes, seconds = timeString:match("(%d+) minutes, (%d+) seconds ago")
-            if minutes and seconds then
-                local timeInSeconds = tonumber(minutes) * 60 + tonumber(seconds)
-                return timeInSeconds
+            local totalSeconds = 0
+            local seconds = timeString:match("(%d+) seconds ago")
+            if seconds then
+                totalSeconds = totalSeconds + tonumber(seconds)
             end
+            local minutes = timeString:match("(%d+) minutes")
+            if minutes then
+                totalSeconds = totalSeconds + tonumber(minutes) * 60
+            end
+            local hours = timeString:match("(%d+) hours")
+            if hours then
+                totalSeconds = totalSeconds + tonumber(hours) * 3600
+            end
+            local days = timeString:match("(%d+) days")
+            if days then
+                totalSeconds = totalSeconds + tonumber(days) * 86400
+            end
+            return totalSeconds
         end
     end
     return 0
