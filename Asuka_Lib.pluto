@@ -227,7 +227,6 @@ function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll,
                 if assisted then
                     entity = GET_CLOSEST_OBJECT_OF_TYPE(locationV3, 0.1, hash, false, false, false)
                     if asuka_lib.does_entity_exist(entity) then
-                        util.toast("using old object :D "..util.reverse_joaat(entities.get_model_hash(entity)).." for "..util.reverse_joaat(hash))
                         return entity
                     end
                 end
