@@ -123,7 +123,7 @@ function asuka_lib.get_session_code()
 end
 
 function asuka_lib.does_entity_exist(entity)
-    if entity and entity ~= INVALID_GUID and DOES_ENTITY_EXIST(entity)then
+    if entity and entity ~= INVALID_GUID and DOES_ENTITY_EXIST(entity) then
         return true
     end
     return false
