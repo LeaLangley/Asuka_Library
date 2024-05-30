@@ -213,9 +213,6 @@ function asuka_lib.allow_spawn_check()
     if not NETWORK_IS_PLAYER_ACTIVE(players.user()) then
         return false
     end
-    if GET_INTERIOR_FROM_ENTITY(players.user_ped()) == 281345 then --and IS_HELP_MESSAGE_BEING_DISPLAYED()
-        return false
-    end
     if GET_INTERIOR_FROM_ENTITY(players.user_ped()) ~= 0 and asuka_lib.is_user_inside_vehicle(true) then
         return false
     end
@@ -238,9 +235,9 @@ function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll,
                 entity = CREATE_OBJECT_NO_OFFSET(hash, locationV3, false, true, false)
             end
             if asuka_lib.does_entity_exist(entity) then
-                --if networked then
-                --    entities.set_can_migrate(entity, false)
-                --end
+                if networked then
+                    entities.set_can_migrate(entity, false)
+                end
                 SET_ENTITY_COORDS_NO_OFFSET(entity, locationV3, true, true, true)
                 SET_ENTITY_ROTATION(entity, pitch, roll, yaw, order, true)
                 FREEZE_ENTITY_POSITION(entity, true)
