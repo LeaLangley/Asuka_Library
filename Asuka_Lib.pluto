@@ -259,12 +259,6 @@ function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll,
                 util.yield(timeout)
             end
             if closestPlayer then
-                if closestPlayer == players.user() then
-                    entities.request_control(entity)
-                    entities.set_can_migrate(entity, false)
-                else
-                    entities.set_can_migrate(entity, true)
-                end
                 SET_ENTITY_NO_COLLISION_ENTITY(entity, GET_PLAYER_PED_SCRIPT_INDEX(closestPlayer), false)
             end
         end
