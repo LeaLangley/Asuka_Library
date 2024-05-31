@@ -300,7 +300,7 @@ function asuka_lib.load_and_apply_config(config_path, data_cfg)
         if decode_status then
             for store, path in pairs(data_cfg) do
                 local value = decoded_data[store]
-                if value ~= nil then
+                if value ~= nil and value ~= false then
                     menu.set_value(path, value)
                 end
                 util.yield()
