@@ -296,7 +296,6 @@ function asuka_lib.write_to_file(the_path, payload)
         local directory = the_path:match("(.*/)")
         if directory then
             filesystem.mkdir(directory)
-            util.yield()
         end
     end
     local file = io.open(the_path, "w")
@@ -310,19 +309,20 @@ end
 
 function asuka_lib.load_and_apply_config(config_path, data_cfg)
     local config_data = asuka_lib.read_from_file(config_path)
-
-    local decode_status, decoded_data = pcall(soup.json.decode, config_data)
-    if decode_status then
-        for store, path in pairs(data_cfg) do
-            local value = decoded_data[store]
-            if value ~= nil and value ~= false then
-                menu.set_value(path, value)
+    if not config_data then
+        local decode_status, decoded_data = pcall(soup.json.decode, config_data)
+        if decode_status then
+            for store, path in pairs(data_cfg) do
+                local value = decoded_data[store]
+                if value ~= nil and value ~= false then
+                    menu.set_value(path, value)
+                end
+                util.yield()
             end
-            util.yield()
+            print("Config loaded and applied successfully.")
+        else
+            print("Error: Unable to decode config data.")
         end
-        print("Config loaded and applied successfully.")
-    else
-        print("Error: Unable to decode config data.")
     end
 end
 
