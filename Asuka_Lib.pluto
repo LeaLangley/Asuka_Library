@@ -283,11 +283,13 @@ function asuka_lib.read_from_file(the_path)
     end
 end
 
-function asuka_lib.write_to_file(payload, the_path)
+function asuka_lib.write_to_file(the_path, payload)
     if not filesystem.exists(the_path) then
         local directory = the_path:match("(.*/)")
-        filesystem.mkdir(directory)
-        util.yield()
+        if directory then
+            filesystem.mkdir(directory)
+            util.yield()
+        end
     end
     local file = io.open(the_path, "w")
     if file then
