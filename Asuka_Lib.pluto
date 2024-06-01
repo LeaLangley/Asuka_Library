@@ -283,6 +283,7 @@ function asuka_lib.read_from_file(the_path)
         file:close()
         return content
     else
+        print("ERROR: Could not read file")
         return nil
     end
 end
