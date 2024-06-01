@@ -273,6 +273,10 @@ function asuka_lib.delete_entity(ent)
 end
 
 function asuka_lib.read_from_file(the_path)
+    if type(the_path) ~= "string" then
+        print("ERROR: the_path must be a string.")
+        return
+    end    
     local file = io.open(the_path, "r")
     if file then
         local content = file:read("*all")
@@ -284,6 +288,10 @@ function asuka_lib.read_from_file(the_path)
 end
 
 function asuka_lib.write_to_file(the_path, payload)
+    if type(the_path) ~= "string" then
+        print("ERROR: the_path must be a string.")
+        return
+    end    
     if not filesystem.exists(the_path) then
         local directory = the_path:match("(.*/)")
         if directory then
