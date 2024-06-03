@@ -138,8 +138,9 @@ function asuka_lib.get_user_vehicle()
     end
 end
 
+local trailerPtr = memory.alloc_int()
+
 function asuka_lib.get_trailer(vehicle)
-    local trailerPtr = memory.alloc_int()
     GET_VEHICLE_TRAILER_VEHICLE(vehicle, trailerPtr)
     local trailer = memory.read_int(trailerPtr)
     return trailer
