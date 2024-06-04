@@ -261,6 +261,8 @@ function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll,
             end
             if closestDistance and closestDistance < 3 then
                 SET_ENTITY_COMPLETELY_DISABLE_COLLISION(entity, true, false)
+            else
+                SET_ENTITY_COMPLETELY_DISABLE_COLLISION(entity, false, false)
             end
         end
     end
