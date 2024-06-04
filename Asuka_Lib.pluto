@@ -245,7 +245,7 @@ function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll,
             end
         end
     end
-    if anti_collision and asuka_lib.does_entity_exist(entity) and asuka_lib.transition_state(true) <2 then
+    if anti_collision and asuka_lib.does_entity_exist(entity) then
         if not networked then
             SET_ENTITY_NO_COLLISION_ENTITY(entity, players.user_ped(), false)
         else
@@ -266,7 +266,7 @@ function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll,
                     SET_ENTITY_COLLISION(entity, false, false)
                 end
             else
-                SET_ENTITY_COLLISION(entity, true, false)
+                SET_ENTITY_NO_COLLISION_ENTITY(entity, players.user_ped(), false)
             end
         end
     end
