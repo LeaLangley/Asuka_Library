@@ -190,6 +190,11 @@ function asuka_lib.is_user_inside_vehicle(bool)
     return (IS_PED_IN_ANY_VEHICLE(players.user_ped(), bool))
 end
 
+function asuka_lib.get_random_value(min, max)
+    math.randomseed(os.time())
+    return math.random(min, max)
+end
+
 function asuka_lib.request_model(hash, timeout)
     if not HAS_MODEL_LOADED(hash) then
         REQUEST_MODEL(hash)
