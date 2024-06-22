@@ -125,8 +125,7 @@ end
 function asuka_lib.get_session_code_bool()
     local applicable, code = util.get_session_code()
     if applicable and code then
-            return true
-        end
+        return true
     end
     return false
 end
