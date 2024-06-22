@@ -122,6 +122,15 @@ function asuka_lib.get_session_code()
     return "N/A"
 end
 
+function asuka_lib.get_session_code_bool()
+    local applicable, code = util.get_session_code()
+    if applicable and code then
+            return true
+        end
+    end
+    return false
+end
+
 function asuka_lib.does_entity_exist(entity)
     if entity and entity ~= INVALID_GUID and DOES_ENTITY_EXIST(entity) then
         return true
