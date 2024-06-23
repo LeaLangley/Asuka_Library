@@ -221,7 +221,7 @@ function asuka_lib.allow_spawn_check()
     if NETWORK_IS_ACTIVITY_SESSION() then
         return false
     end
-    if not players.is_visible(players.user()) or NETWORK_IS_PLAYER_FADING(players.user()) and not players.is_using_rc_vehicle(pid) then
+    if not players.is_visible(players.user()) or NETWORK_IS_PLAYER_FADING(players.user()) and not players.is_using_rc_vehicle(players.user()) then
         return false
     end
     if not NETWORK_IS_PLAYER_ACTIVE(players.user()) then
