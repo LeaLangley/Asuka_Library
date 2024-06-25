@@ -98,7 +98,7 @@ function asuka_lib.is_loading(pid)
 end
 
 function asuka_lib.is_in_clouds(pid)
-    if asuka_lib.transition_state(true) ~= 1 then
+    if asuka_lib.transition_state(true) > 2 then
         if pid == players.user() then
             return true
         else
@@ -335,7 +335,8 @@ function asuka_lib.load_and_apply_config(config_path, data_cfg)
         if decode_status then
             for store, path in pairs(data_cfg) do
                 local value = decoded_data[store]
-                if value ~= nil and value ~= false then
+                local original_value = menu.get_value(path)
+                if value ~= nil and type(value) == type(original_value) then
                     menu.set_value(path, value)
                 end
                 util.yield()
