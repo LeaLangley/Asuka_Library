@@ -236,6 +236,9 @@ end
 function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll, yaw, order, timeout, anti_collision, networked, assisted)
     if order == nil then order = 2 end
     if not asuka_lib.does_entity_exist(entity) then
+        if type(hash) == "string" then
+            hash = util.joaat(hash)
+        end
         if asuka_lib.request_model(hash, timeout) then
             if networked then
                 if assisted then
@@ -249,7 +252,7 @@ function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll,
                 entity = CREATE_OBJECT_NO_OFFSET(hash, locationV3, false, true, false)
             end
             if asuka_lib.does_entity_exist(entity) then
-                if networked and not anti_collision then
+                if networked then
                     entities.set_can_migrate(entity, false)
                 end
                 SET_ENTITY_COORDS_NO_OFFSET(entity, locationV3, true, true, true)
