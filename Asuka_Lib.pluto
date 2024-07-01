@@ -227,7 +227,7 @@ function asuka_lib.allow_spawn_check()
     if not NETWORK_IS_PLAYER_ACTIVE(players.user()) then
         return false
     end
-    if GET_INTERIOR_FROM_ENTITY(players.user_ped()) ~= 0 and asuka_lib.is_user_inside_vehicle(true) then
+    if asuka_lib.transition_state(true) == 666 then
         return false
     end
     return true
