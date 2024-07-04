@@ -233,7 +233,7 @@ function asuka_lib.allow_spawn_check()
     return true
 end
 
-function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll, yaw, order, timeout, anti_collision, networked, assisted)
+function asuka_lib.spawn_and_check_placed_object(entity, hash, locationV3, pitch, roll, yaw, order, timeout, anti_collision, networked, assisted)
     if order == nil then order = 2 end
     if not asuka_lib.does_entity_exist(entity) then
         if type(hash) == "string" then
@@ -287,6 +287,10 @@ function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll,
         end
     end
     return entity
+end
+
+function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll, yaw, order, timeout, anti_collision, networked, assisted)
+    asuka_lib.spawn_and_check_placed_object(entity, hash, locationV3, pitch, roll, yaw, order, timeout, anti_collision, networked, assisted)
 end
 
 function asuka_lib.delete_entity(ent)
