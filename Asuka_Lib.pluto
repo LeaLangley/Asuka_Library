@@ -233,7 +233,7 @@ function asuka_lib.allow_spawn_check()
     return true
 end
 
-function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll, yaw, order, timeout, anti_collision, networked, assisted)
+function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll, yaw, order, timeout, anti_collision, networked, assisted) -- For placing objects.
     if order == nil then order = 2 end
     if not asuka_lib.does_entity_exist(entity) then
         if type(hash) == "string" then
