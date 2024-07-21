@@ -1,3 +1,4 @@
+local json = require("json")
 local asuka_lib = {}
 
 function asuka_lib.session_type()
@@ -334,8 +335,8 @@ end
 function asuka_lib.load_and_apply_config(config_path, data_cfg)
     local config_data = asuka_lib.read_from_file(config_path)
     if config_data then
-        local decode_status, decoded_data = pcall(soup.json.decode, config_data)
-        if decode_status then
+        local json_status_decode, decoded_data = pcall(json.decode, config_data)
+        if json_status_decode and decoded_data then
             for store, path in pairs(data_cfg) do
                 local value = decoded_data[store]
                 local original_value = menu.get_value(path)
@@ -360,8 +361,10 @@ function asuka_lib.save_config(config_path, data_cfg, bool)
         end
     end
 
-    local encode_status, json_data = pcall(soup.json.encode, config_data)
-    asuka_lib.write_to_file(config_path, json_data)
+    local json_status_encode, json_data = pcall(json.encode, config_data)
+    if json_status_encode and json_data then
+        asuka_lib.write_to_file(config_path, json_data)
+    end
 end
 
 return asuka_lib
