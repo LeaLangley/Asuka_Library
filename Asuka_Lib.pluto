@@ -254,8 +254,8 @@ function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll,
             end
             if asuka_lib.does_entity_exist(entity) then
                 if networked then
-                    if GET_ENTITY_LOD_DIST(entity) > 100 then
-                        SET_ENTITY_LOD_DIST(entity, 100)
+                    if GET_ENTITY_LOD_DIST(entity) > 66 then
+                        SET_ENTITY_LOD_DIST(entity, 66)
                     end
                     if not anti_collision then
                         entities.set_can_migrate(entity, false)
