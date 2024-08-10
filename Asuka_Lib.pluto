@@ -253,8 +253,13 @@ function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll,
                 entity = CREATE_OBJECT_NO_OFFSET(hash, locationV3, false, true, false)
             end
             if asuka_lib.does_entity_exist(entity) then
-                if networked and not anti_collision then
-                    entities.set_can_migrate(entity, false)
+                if networked then
+                    if GET_ENTITY_LOD_DIST(entity) > 100 then
+                        SET_ENTITY_LOD_DIST(entity, 100)
+                    end
+                    if not anti_collision then
+                        entities.set_can_migrate(entity, false)
+                    end
                 end
                 SET_ENTITY_COORDS_NO_OFFSET(entity, locationV3, true, true, true)
                 SET_ENTITY_ROTATION(entity, pitch, roll, yaw, order, true)
