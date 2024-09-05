@@ -50,7 +50,8 @@ function asuka_lib.has_detection(pid, detection_part)
         for menu.player_root(pid):getChildren() as cmd do
             if asuka_lib.player_exist(pid) and cmd:getType() == COMMAND_LIST_CUSTOM_SPECIAL_MEANING then
                 for cmd:getChildren() as detection do
-                    if asuka_lib.player_exist(pid) and string.contains(detection.menu_name, detection_part) then
+                    detection_menu_name = detection.menu_name
+                    if asuka_lib.player_exist(pid) and (string.contains(detection_menu_name, detection_part) or string.contains(lang.get_string(detection_menu_name), detection_part)) then
                         return true
                     end
                 end
