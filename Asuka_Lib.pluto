@@ -3,6 +3,9 @@ local asuka_lib = {}
 
 function asuka_lib.session_type()
     if util.is_session_started() or util.is_session_transition_active() then
+        if NETWORK_IS_ACTIVITY_SESSION() then
+            return "Activity"
+        end
         if NETWORK_SESSION_IS_PRIVATE() then
             return "Privat"
         end
