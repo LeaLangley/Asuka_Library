@@ -300,8 +300,8 @@ function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll,
             end
         end
     end
-    return entity
     ::spawn_check_skip::
+    return entity
 end
 
 function asuka_lib.read_from_file(the_path)
