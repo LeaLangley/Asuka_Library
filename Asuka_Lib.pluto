@@ -252,7 +252,7 @@ function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll,
         else
             local close_friendly = false
             for players.list_only(true, true, false, true) as pid do
-                if locationV3:distance(players.get_position(pid)) < 7 then
+                if locationV3:distance(players.get_position(pid)) < 6 then
                     close_friendly = true
                 end
                 util.yield(timeout)
