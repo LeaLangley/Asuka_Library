@@ -251,7 +251,7 @@ function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll,
             SET_ENTITY_NO_COLLISION_ENTITY(entity, players.user_ped(), false)
         else
             local close_friendly = false
-            for players.list_only(true, true, false, true) as pid do
+            for players.list_only(false, true, false, true) as pid do
                 if locationV3:distance(players.get_position(pid)) < 3 then
                     close_friendly = true
                 end
