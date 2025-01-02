@@ -159,6 +159,18 @@ function asuka_lib.get_trailer(vehicle)
     return trailer
 end
 
+function asuka_lib.ped_to_pid(ped)
+    if IS_PED_A_PLAYER(ped) then
+        for players.list_except(true) as pid do
+            pid_pad = GET_PLAYER_PED_SCRIPT_INDEX(pid)
+            if pid_pad == ped then
+                return pid
+            end
+        end
+    end
+    return false
+end
+
 function asuka_lib.is_user_driving_vehicle(vehicle)
     if GET_PED_IN_VEHICLE_SEAT(vehicle, -1) == players.user_ped() then
         return true
