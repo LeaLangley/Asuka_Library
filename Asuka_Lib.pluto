@@ -256,15 +256,37 @@ function asuka_lib.delete_entity(ent)
     end
 end
 
+local minimum_dimensions_v3 = v3.new()
+local maximum_dimensions_v3 = v3.new()
+
+asuka_lib.model_dimensions_cache = {}
+
+function asuka_lib.get_model_dimension(model)
+    if asuka_lib.model_dimensions_cache[model] then
+        return table.unpack(asuka_lib.model_dimensions_cache[model])
+    end
+    GET_MODEL_DIMENSIONS(model, minimum_dimensions_v3, maximum_dimensions_v3)
+    local length = maximum_dimensions_v3:getX() - minimum_dimensions_v3:getX()
+    local width = maximum_dimensions_v3:getY() - minimum_dimensions_v3:getY()
+    local height = maximum_dimensions_v3:getZ() - minimum_dimensions_v3:getZ()
+    asuka_lib.model_dimensions_cache[model] = {length, width, height}
+    return length, width, height
+end
+
+function asuka_lib.get_model_max_size(model)
+    local length, width, height = asuka_lib.get_model_dimension(model)
+    return math.max(length, width, height)
+end
+
 function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll, yaw, order, timeout, anti_collision, networked, assisted) -- For placing objects.
     if order == nil then order = 2 end
-    if anti_collision and not asuka_lib.does_entity_exist(entity) then
+    if anti_collision then
         if not networked then
             SET_ENTITY_NO_COLLISION_ENTITY(entity, players.user_ped(), false)
         else
             local close_friendly = false
             for players.list_only(true, true, false, true) as pid do
-                if locationV3:distance(players.get_position(pid)) < 6 then
+                if locationV3:distance(players.get_position(pid)) < 13 then
                     close_friendly = true
                     break
                 end
@@ -272,7 +294,7 @@ function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll,
             end
             if close_friendly then
                 for players.list_only(false, false, true, false) as pid do
-                    if locationV3:distance(players.get_position(pid)) < 25 then
+                    if locationV3:distance(players.get_position(pid)) < 31 then
                         close_friendly = false
                         SET_ENTITY_NO_COLLISION_ENTITY(entity, players.user_ped(), false)
                         break
