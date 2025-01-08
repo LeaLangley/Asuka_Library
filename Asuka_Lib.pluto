@@ -387,15 +387,21 @@ function asuka_lib.load_and_apply_config(config_path, data_cfg)
     if config_data then
         local json_status_decode, decoded_data = pcall(json.decode, config_data)
         if json_status_decode and decoded_data then
+            local amount = 0
+            local amount2 = 0
             for store, path in pairs(data_cfg) do
                 local value = decoded_data[store]
                 local original_value = menu.get_value(path)
                 if value ~= nil and type(value) == type(original_value) then
-                    menu.set_value(path, value)
+                    if value ~= original_value then
+                        menu.set_value(path, value)
+                        amount2 += 1
+                    end
+                    util.yield()
                 end
-                util.yield()
+                amount += 1
             end
-            print("Config loaded and applied successfully.")
+            print("Remembered "..amount.." Settings and had to restore "..amount2)
         else
             print("Error: Unable to decode config data.")
         end
