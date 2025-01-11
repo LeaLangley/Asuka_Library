@@ -411,7 +411,10 @@ end
 function asuka_lib.save_config(config_path, data_cfg, bool)
     local config_data = {}
     for store, path in pairs(data_cfg) do
-        config_data[store] = menu.get_value(path)
+        path_value = menu.get_value(path)
+        if path_value ~= menu.get_default_state(path) then
+            config_data[store] = path_value
+        end
         if bool then
             util.yield()
         end
