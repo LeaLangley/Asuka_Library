@@ -96,7 +96,7 @@ function asuka_lib.is_loading(pid)
     if asuka_lib.transition_state(true) ~= 1 then
         return false
     end
-    if (not players.is_visible(pid) or NETWORK_IS_PLAYER_FADING(pid)) and players.are_stats_ready(pid) and GET_ENTITY_SPEED(GET_PLAYER_PED_SCRIPT_INDEX(pid)) < 1 and not IS_PLAYER_IN_CUTSCENE(pid) and not players.is_using_rc_vehicle(pid) then
+    if (not players.is_visible(pid) or NETWORK_IS_PLAYER_FADING(pid)) and players.are_stats_ready(pid) and GET_ENTITY_SPEED(GET_PLAYER_PED_SCRIPT_INDEX(pid)) < 1 and not players.is_using_rc_vehicle(pid) then
         return true
     end
     return false
@@ -326,7 +326,7 @@ function asuka_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll,
                 end
                 entity = entities.create_object(hash, locationV3)
             else
-                entity = CREATE_OBJECT_NO_OFFSET(hash, locationV3, false, true, false)
+                entity = CREATE_OBJECT_NO_OFFSET(hash, locationV3, false, true, false, 0)
             end
             ::spawn_check_skip_2::
             if asuka_lib.does_entity_exist(entity) then
